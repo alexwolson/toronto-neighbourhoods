@@ -1,0 +1,6 @@
+{
+  "name": "Draw Your NYC Neighborhood",
+  "description": "An interactive map tool where users can draw the boundaries of their neighborhood.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
