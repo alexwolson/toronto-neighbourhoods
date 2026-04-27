@@ -14,6 +14,7 @@ export default function App() {
   const [neighborhoodName, setNeighborhoodName] = useState("");
   const [polygonPoints, setPolygonPoints] = useState<LatLngTuple[]>([]);
   const [isFinished, setIsFinished] = useState(false);
+  const [isAppSubmitted, setIsAppSubmitted] = useState(false);
 
   return (
     <div className="flex flex-col-reverse md:flex-row h-[100dvh] w-full bg-white text-gray-900 overflow-hidden font-sans">
@@ -28,6 +29,8 @@ export default function App() {
         setPolygonPoints={setPolygonPoints}
         isFinished={isFinished}
         setIsFinished={setIsFinished}
+        isAppSubmitted={isAppSubmitted}
+        setIsAppSubmitted={setIsAppSubmitted}
       />
       <div className="flex-1 w-full relative z-0">
         <MapEditor 
@@ -39,6 +42,7 @@ export default function App() {
           setPolygonPoints={setPolygonPoints}
           isFinished={isFinished}
           setIsFinished={setIsFinished}
+          isAppSubmitted={isAppSubmitted}
         />
       </div>
     </div>

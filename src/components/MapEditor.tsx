@@ -54,6 +54,7 @@ interface MapEditorProps {
   setPolygonPoints: Dispatch<SetStateAction<LatLngTuple[]>>;
   isFinished: boolean;
   setIsFinished: Dispatch<SetStateAction<boolean>>;
+  isAppSubmitted: boolean;
 }
 
 const DrawingEvents = ({
@@ -66,6 +67,7 @@ const DrawingEvents = ({
   setIsFinished,
   mousePos,
   setMousePos,
+  isAppSubmitted,
 }: {
   step: 1 | 2 | 3 | 4;
   setStep: Dispatch<SetStateAction<1 | 2 | 3 | 4>>;
@@ -76,9 +78,11 @@ const DrawingEvents = ({
   setIsFinished: Dispatch<SetStateAction<boolean>>;
   mousePos: LatLngTuple | null;
   setMousePos: Dispatch<SetStateAction<LatLngTuple | null>>;
+  isAppSubmitted: boolean;
 }) => {
   const map = useMapEvents({
     mousemove(e) {
+      if (isAppSubmitted) return;
       if (step === 3 && !isFinished && points.length > 0) {
         if (isPointInToronto(e.latlng.lat, e.latlng.lng)) {
           setMousePos([e.latlng.lat, e.latlng.lng]);
@@ -86,6 +90,7 @@ const DrawingEvents = ({
       }
     },
     click(e) {
+      if (isAppSubmitted) return;
       if (!isPointInToronto(e.latlng.lat, e.latlng.lng)) {
         return; // Ignore clicks outside Toronto limits
       }
@@ -114,6 +119,13 @@ const DrawingEvents = ({
         }
       }
 
+      if (points.length >= 49) {
+        alert("Maximum points reached for polygon.");
+        setIsFinished(true);
+        setMousePos(null);
+        setStep(4);
+        return;
+      }
       setPoints((prev) => [...prev, newPoint]);
     },
   });
@@ -130,17 +142,18 @@ export default function MapEditor({
   setPolygonPoints,
   isFinished,
   setIsFinished,
+  isAppSubmitted,
 }: MapEditorProps) {
   const [mousePos, setMousePos] = useState<LatLngTuple | null>(null);
 
   const ghostLineParams = useMemo(() => {
-    if (step !== 3 || isFinished || polygonPoints.length === 0 || !mousePos) return null;
+    if (isAppSubmitted || step !== 3 || isFinished || polygonPoints.length === 0 || !mousePos) return null;
     const lastPoint = polygonPoints[polygonPoints.length - 1];
     return [lastPoint, mousePos];
-  }, [step, isFinished, polygonPoints, mousePos]);
+  }, [step, isFinished, polygonPoints, mousePos, isAppSubmitted]);
 
   return (
-    <div className={`w-full h-full relative ${step === 3 && !isFinished ? "cursor-crosshair" : (step === 1 ? "cursor-crosshair" : "cursor-default")}`}>
+    <div className={`w-full h-full relative ${!isAppSubmitted && step === 3 && !isFinished ? "cursor-crosshair" : (!isAppSubmitted && step === 1 ? "cursor-crosshair" : "cursor-default")}`}>
       <MapContainer
         center={[43.6532, -79.3832]}
         zoom={12}
@@ -178,28 +191,29 @@ export default function MapEditor({
           setIsFinished={setIsFinished}
           mousePos={mousePos}
           setMousePos={setMousePos}
+          isAppSubmitted={isAppSubmitted}
         />
 
         {homeLocation && (
           <CircleMarker
             center={homeLocation}
             radius={7}
-            pathOptions={{ color: "#2563eb", fillColor: "#2563eb", fillOpacity: 1 }}
+            pathOptions={{ color: "#111827", fillColor: "#111827", fillOpacity: 1 }}
           />
         )}
 
         {step >= 3 && !isFinished && polygonPoints.length > 0 && (
-          <Polyline positions={polygonPoints} color="#2563eb" weight={3} dashArray="5, 10" />
+          <Polyline positions={polygonPoints} color="#111827" weight={3} dashArray="5, 10" />
         )}
 
         {ghostLineParams && (
-          <Polyline positions={ghostLineParams} color="#2563eb" weight={3} dashArray="5, 10" opacity={0.5} />
+          <Polyline positions={ghostLineParams} color="#111827" weight={3} dashArray="5, 10" opacity={0.5} />
         )}
 
         {step >= 3 && isFinished && polygonPoints.length > 2 && (
           <Polygon 
             positions={polygonPoints} 
-            pathOptions={{ color: "#2563eb", fillColor: "#3b82f6", fillOpacity: 0.3, weight: 3 }} 
+            pathOptions={{ color: "#111827", fillColor: "#111827", fillOpacity: 0.15, weight: 3 }} 
           />
         )}
 
@@ -211,7 +225,7 @@ export default function MapEditor({
               center={point}
               radius={isFirstPoint && !isFinished ? 8 : 4}
               pathOptions={{
-                color: "#2563eb",
+                color: "#111827",
                 fillColor: "white",
                 fillOpacity: 1,
                 weight: 2,
@@ -227,7 +241,7 @@ export default function MapEditor({
               }}
             >
               {isFirstPoint && !isFinished && polygonPoints.length > 2 && (
-                <Tooltip permanent direction="right" className="bg-transparent border-none text-blue-600 font-semibold shadow-none text-sm">
+                <Tooltip permanent direction="right" className="bg-transparent border-none text-gray-900 font-semibold shadow-none text-sm">
                   Click to close shape
                 </Tooltip>
               )}

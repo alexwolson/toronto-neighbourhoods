@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Custom Helpers
+    function incoming() { return request.resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128; }
+    
+    // Neighborhood validation
+    function isValidNeighborhood(data) {
+      return data.keys().hasAll(['neighborhoodName', 'homeLocation', 'polygonPoints', 'createdAt'])
+        && data.neighborhoodName is string
+        && data.neighborhoodName.size() > 0
+        && data.neighborhoodName.size() <= 150
+        && data.homeLocation is list
+        && data.homeLocation.size() == 2
+        && data.homeLocation[0] is number
+        && data.homeLocation[1] is number
+        && data.polygonPoints is list
+        && data.polygonPoints.size() >= 3
+        && data.polygonPoints.size() <= 50
+        && data.polygonPoints[0] is map
+        && data.polygonPoints[0].keys().hasAll(['lat', 'lng'])
+        && data.polygonPoints[0].lat is number
+        && data.polygonPoints[0].lng is number
+        && data.get('changesText', '') is string
+        && data.get('changesText', '').size() <= 5000
+        && data.get('otherNamesText', '') is string
+        && data.get('otherNamesText', '').size() <= 1000
+        && data.createdAt is timestamp;
+    }
+
+    match /neighborhoods/{id} {
+      allow get: if isValidId(id);
+      allow create: if isValidId(id) && isValidNeighborhood(incoming());
+      
+      allow update: if isValidId(id) 
+        && isValidNeighborhood(incoming())
+        && incoming().createdAt == resource.data.createdAt;
+        
+      allow list, delete: if false;
+    }
+  }
+}

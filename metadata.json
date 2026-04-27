@@ -1,6 +1,6 @@
 {
-  "name": "Draw Your NYC Neighborhood",
-  "description": "An interactive map tool where users can draw the boundaries of their neighborhood.",
+  "name": "Draw Your Toronto Neighbourhood",
+  "description": "An interactive map tool where users can crowdsource boundaries of their Toronto neighbourhoods.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
