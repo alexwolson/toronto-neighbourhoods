@@ -169,16 +169,16 @@ export default function MapEditor({
         />
         
         {/* Subtle visualization of Toronto limits */}
-        <Polygon 
-          positions={[WORLD_BOUNDS, TORONTO_POLYGON_LAT_LNG]} 
-          pathOptions={{ 
-            color: "#64748b", 
-            fillColor: "#e2e8f0", 
-            fillOpacity: 0.6, 
-            weight: 2,
+        <Polygon
+          positions={[WORLD_BOUNDS, TORONTO_POLYGON_LAT_LNG]}
+          pathOptions={{
+            color: "#007894",
+            fillColor: "#e8f4f8",
+            fillOpacity: 0.4,
+            weight: 1.5,
             dashArray: "4, 8",
             interactive: false
-          }} 
+          }}
         />
 
         <DrawingEvents
@@ -198,22 +198,22 @@ export default function MapEditor({
           <CircleMarker
             center={homeLocation}
             radius={7}
-            pathOptions={{ color: "#111827", fillColor: "#111827", fillOpacity: 1 }}
+            pathOptions={{ color: "#1E3765", fillColor: "#1E3765", fillOpacity: 1 }}
           />
         )}
 
         {step >= 3 && !isFinished && polygonPoints.length > 0 && (
-          <Polyline positions={polygonPoints} color="#111827" weight={3} dashArray="5, 10" />
+          <Polyline positions={polygonPoints} color="#1E3765" weight={3} dashArray="5, 10" />
         )}
 
         {ghostLineParams && (
-          <Polyline positions={ghostLineParams} color="#111827" weight={3} dashArray="5, 10" opacity={0.5} />
+          <Polyline positions={ghostLineParams} color="#1E3765" weight={3} dashArray="5, 10" opacity={0.5} />
         )}
 
         {step >= 3 && isFinished && polygonPoints.length > 2 && (
-          <Polygon 
-            positions={polygonPoints} 
-            pathOptions={{ color: "#111827", fillColor: "#111827", fillOpacity: 0.15, weight: 3 }} 
+          <Polygon
+            positions={polygonPoints}
+            pathOptions={{ color: "#1E3765", fillColor: "#1E3765", fillOpacity: 0.15, weight: 3 }}
           />
         )}
 
@@ -225,7 +225,7 @@ export default function MapEditor({
               center={point}
               radius={isFirstPoint && !isFinished ? 8 : 4}
               pathOptions={{
-                color: "#111827",
+                color: "#1E3765",
                 fillColor: "white",
                 fillOpacity: 1,
                 weight: 2,
