@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useState, useRef, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { 
   MapContainer, 
   TileLayer, 
@@ -9,23 +9,16 @@ import {
   useMapEvents, 
   Tooltip 
 } from "react-leaflet";
-import { LatLngBounds } from "leaflet";
 import type { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import pointInPolygon from "point-in-polygon";
 
-// Load the GeoJSON we fetched for Toronto limits
 import torontoGeoJson from "../toronto.json";
 
 // The outer boundary ring of Toronto
 const TORONTO_POLYGON_LNG_LAT = torontoGeoJson.coordinates[0];
 const TORONTO_POLYGON_LAT_LNG: LatLngTuple[] = TORONTO_POLYGON_LNG_LAT.map(
   (pt: number[]) => [pt[1], pt[0]] as LatLngTuple
-);
-
-const TORONTO_BOUNDS = new LatLngBounds(
-  [43.58, -79.64], // Southwest
-  [43.86, -79.11]  // Northeast
 );
 
 const TORONTO_BOUNDS_TUPLE: [LatLngTuple, LatLngTuple] = [
@@ -64,10 +57,9 @@ const DrawingEvents = ({
   points,
   setPoints,
   isFinished,
-  setIsFinished,
-  mousePos,
   setMousePos,
   isAppSubmitted,
+  onClosePolygon,
 }: {
   step: 1 | 2 | 3 | 4;
   setStep: Dispatch<SetStateAction<1 | 2 | 3 | 4>>;
@@ -75,10 +67,9 @@ const DrawingEvents = ({
   points: LatLngTuple[];
   setPoints: Dispatch<SetStateAction<LatLngTuple[]>>;
   isFinished: boolean;
-  setIsFinished: Dispatch<SetStateAction<boolean>>;
-  mousePos: LatLngTuple | null;
   setMousePos: Dispatch<SetStateAction<LatLngTuple | null>>;
   isAppSubmitted: boolean;
+  onClosePolygon: () => void;
 }) => {
   const map = useMapEvents({
     mousemove(e) {
@@ -92,7 +83,7 @@ const DrawingEvents = ({
     click(e) {
       if (isAppSubmitted) return;
       if (!isPointInToronto(e.latlng.lat, e.latlng.lng)) {
-        return; // Ignore clicks outside Toronto limits
+        return;
       }
 
       if (step === 1) {
@@ -100,30 +91,25 @@ const DrawingEvents = ({
         setStep(2);
         return;
       }
-      
-      // We only draw polygons in step 3
+
       if (step !== 3 || isFinished) return;
-      
+
       const newPoint: LatLngTuple = [e.latlng.lat, e.latlng.lng];
-      
+
       if (points.length > 2) {
         const firstPoint = map.latLngToContainerPoint(points[0]);
         const clickedPoint = map.latLngToContainerPoint(e.latlng);
         const distance = firstPoint.distanceTo(clickedPoint);
-        
+
         if (distance < 20) {
-          setIsFinished(true);
-          setMousePos(null);
-          setStep(4);
+          onClosePolygon();
           return;
         }
       }
 
       if (points.length >= 49) {
         alert("Maximum points reached for polygon.");
-        setIsFinished(true);
-        setMousePos(null);
-        setStep(4);
+        onClosePolygon();
         return;
       }
       setPoints((prev) => [...prev, newPoint]);
@@ -146,14 +132,24 @@ export default function MapEditor({
 }: MapEditorProps) {
   const [mousePos, setMousePos] = useState<LatLngTuple | null>(null);
 
+  const closePolygon = () => {
+    setIsFinished(true);
+    setMousePos(null);
+    setStep(4);
+  };
+
   const ghostLineParams = useMemo(() => {
     if (isAppSubmitted || step !== 3 || isFinished || polygonPoints.length === 0 || !mousePos) return null;
     const lastPoint = polygonPoints[polygonPoints.length - 1];
     return [lastPoint, mousePos];
   }, [step, isFinished, polygonPoints, mousePos, isAppSubmitted]);
 
+  const cursorClass = !isAppSubmitted && (step === 1 || (step === 3 && !isFinished))
+    ? "cursor-crosshair"
+    : "cursor-default";
+
   return (
-    <div className={`w-full h-full relative ${!isAppSubmitted && step === 3 && !isFinished ? "cursor-crosshair" : (!isAppSubmitted && step === 1 ? "cursor-crosshair" : "cursor-default")}`}>
+    <div className={`w-full h-full relative ${cursorClass}`}>
       <MapContainer
         center={[43.6532, -79.3832]}
         zoom={12}
@@ -188,10 +184,9 @@ export default function MapEditor({
           points={polygonPoints}
           setPoints={setPolygonPoints}
           isFinished={isFinished}
-          setIsFinished={setIsFinished}
-          mousePos={mousePos}
           setMousePos={setMousePos}
           isAppSubmitted={isAppSubmitted}
+          onClosePolygon={closePolygon}
         />
 
         {homeLocation && (
@@ -233,9 +228,7 @@ export default function MapEditor({
               eventHandlers={{
                 click: () => {
                   if (isFirstPoint && polygonPoints.length > 2 && !isFinished) {
-                    setIsFinished(true);
-                    setMousePos(null);
-                    setStep(4);
+                    closePolygon();
                   }
                 }
               }}

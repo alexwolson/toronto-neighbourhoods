@@ -1,7 +1,8 @@
 import { createPortal } from "react-dom";
+import type React from "react";
 import type { Dispatch, SetStateAction, FormEvent } from "react";
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Undo2, X, MapPin } from "lucide-react";
 import type { LatLngTuple } from "leaflet";
 import { collection, addDoc, doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore";
@@ -9,6 +10,48 @@ import { db, handleFirestoreError, OperationType } from "../firebase";
 import logoUofT          from '../assets/logos/logo-uoft.svg?url';
 import logoSchoolCities  from '../assets/logos/logo-school-of-cities.svg?url';
 import logoCarte         from '../assets/logos/logo-carte.svg?url';
+
+interface NeighborhoodDoc {
+  neighborhoodName: string;
+  homeLocation: LatLngTuple;
+  polygonPoints: Array<{ lat: number; lng: number }>;
+  changesText: string;
+  otherNamesText: string;
+  createdAt?: ReturnType<typeof serverTimestamp>;
+}
+
+function Modal({ title, children, onClose, footer }: {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+  footer: React.ReactNode;
+}) {
+  return createPortal(
+    <AnimatePresence>
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
+        <motion.div
+          className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute top-4 right-4 text-uoft-teal bg-uoft-tint-light hover:bg-uoft-tint-bg p-1.5 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <h3 className="text-xl font-black text-uoft-blue mb-4 pr-8 leading-tight">{title}</h3>
+          {children}
+          <div className="mt-6 flex justify-end">{footer}</div>
+        </motion.div>
+      </div>
+    </AnimatePresence>,
+    document.body
+  );
+}
 
 interface SidebarProps {
   step: 1 | 2 | 3 | 4;
@@ -71,7 +114,7 @@ export default function Sidebar({
               setNeighborhoodName(data.neighborhoodName || "");
               setHomeLocation(data.homeLocation as LatLngTuple || null);
               if (data.polygonPoints && Array.isArray(data.polygonPoints)) {
-                setPolygonPoints(data.polygonPoints.map((p: any) => [p.lat, p.lng] as LatLngTuple));
+                setPolygonPoints((data.polygonPoints as Array<{ lat: number; lng: number }>).map(p => [p.lat, p.lng] as LatLngTuple));
                 setIsFinished(true);
               }
               setChangesText(data.changesText || "");
@@ -100,12 +143,12 @@ export default function Sidebar({
       const pathForWrite = 'neighborhoods';
       let docRefId = localStorage.getItem("submittedNeighborhoodId");
       
-      const payload: any = {
+      const payload: Omit<NeighborhoodDoc, 'createdAt'> = {
         neighborhoodName: neighborhoodName.trim(),
         homeLocation,
-        polygonPoints: polygonPoints.slice(0, 50).map(p => ({ lat: p[0], lng: p[1] })),
+        polygonPoints: polygonPoints.map(p => ({ lat: p[0], lng: p[1] })),
         changesText: changesText.trim(),
-        otherNamesText: otherNamesText.trim()
+        otherNamesText: otherNamesText.trim(),
       };
 
       try {
@@ -154,7 +197,7 @@ export default function Sidebar({
         { n: 3, label: 'Draw' },
         { n: 4, label: 'Submit' },
       ] as const).map(({ n, label }) => {
-        const isDone   = step > n || (isAppSubmitted && n <= 4);
+        const isDone   = step > n || isAppSubmitted;
         const isActive = step === n && !isAppSubmitted;
         return (
           <div
@@ -399,85 +442,57 @@ export default function Sidebar({
       </button>
     </div>
 
-      {isDataModalOpen && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
-          <motion.div
-            className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-          >
+      {isDataModalOpen && (
+        <Modal
+          title="What data we store"
+          onClose={() => setIsDataModalOpen(false)}
+          footer={
             <button
               onClick={() => setIsDataModalOpen(false)}
-              aria-label="Close"
-              className="absolute top-4 right-4 text-uoft-teal bg-uoft-tint-light hover:bg-uoft-tint-bg p-1.5 transition-colors"
+              className="px-5 py-2.5 bg-uoft-blue text-white font-bold hover:bg-[#162d55] transition-colors"
             >
-              <X className="w-5 h-5" />
+              Got it
             </button>
-            <h3 className="text-xl font-black text-uoft-blue mb-4">What data we store</h3>
-            <div className="space-y-4 text-sm text-uoft-body leading-relaxed">
-              <p>When you submit your map, we store the following data in our database securely:</p>
-              <ul className="list-disc pl-5 space-y-2">
-                <li><strong className="text-uoft-blue">Your neighbourhood's name</strong> (including alternate names you might suggest).</li>
-                <li><strong className="text-uoft-blue">The pinned location</strong> (a single latitude/longitude coordinate representing the area you selected, not necessarily your home).</li>
-                <li><strong className="text-uoft-blue">The boundary polygon</strong> (the shape of the neighbourhood you drew).</li>
-                <li><strong className="text-uoft-blue">Optional feedback</strong> on how the neighbourhood is changing.</li>
-                <li><strong className="text-uoft-blue">A timestamp</strong> of when the submission was made.</li>
-              </ul>
-              <p>We <strong>do not</strong> collect your name, email address, IP address, or any personally identifiable information (PII). No authentication is required to participate.</p>
-              <div className="pt-2 border-t border-uoft-border">
-                <p>This is a project created by members of the <a href="https://civictech.ca" target="_blank" rel="noopener noreferrer" className="text-uoft-teal font-bold underline hover:text-uoft-blue">Civic Tech Toronto</a> community.</p>
-              </div>
+          }
+        >
+          <div className="space-y-4 text-sm text-uoft-body leading-relaxed">
+            <p>When you submit your map, we store the following data in our database securely:</p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li><strong className="text-uoft-blue">Your neighbourhood's name</strong> (including alternate names you might suggest).</li>
+              <li><strong className="text-uoft-blue">The pinned location</strong> (a single latitude/longitude coordinate representing the area you selected, not necessarily your home).</li>
+              <li><strong className="text-uoft-blue">The boundary polygon</strong> (the shape of the neighbourhood you drew).</li>
+              <li><strong className="text-uoft-blue">Optional feedback</strong> on how the neighbourhood is changing.</li>
+              <li><strong className="text-uoft-blue">A timestamp</strong> of when the submission was made.</li>
+            </ul>
+            <p>We <strong>do not</strong> collect your name, email address, IP address, or any personally identifiable information (PII). No authentication is required to participate.</p>
+            <div className="pt-2 border-t border-uoft-border">
+              <p>This is a project created by members of the <a href="https://civictech.ca" target="_blank" rel="noopener noreferrer" className="text-uoft-teal font-bold underline hover:text-uoft-blue">Civic Tech Toronto</a> community.</p>
             </div>
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setIsDataModalOpen(false)}
-                className="px-5 py-2.5 bg-uoft-blue text-white font-bold hover:bg-[#162d55] transition-colors"
-              >
-                Got it
-              </button>
-            </div>
-          </motion.div>
-        </div>,
-        document.body
+          </div>
+        </Modal>
       )}
 
-      {isWelcomeModalOpen && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
-          <motion.div
-            className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-          >
+      {isWelcomeModalOpen && (
+        <Modal
+          title="Draw Your Toronto Neighbourhood"
+          onClose={handleCloseWelcomeModal}
+          footer={
             <button
               onClick={handleCloseWelcomeModal}
-              aria-label="Close"
-              className="absolute top-4 right-4 text-uoft-teal bg-uoft-tint-light hover:bg-uoft-tint-bg p-1.5 transition-colors"
+              className="px-6 py-2.5 bg-uoft-blue text-white font-bold hover:bg-[#162d55] transition-colors"
             >
-              <X className="w-5 h-5" />
+              Let's go
             </button>
-            <h3 className="text-2xl font-black text-uoft-blue mb-4 pr-6 leading-tight">Draw Your Toronto Neighbourhood</h3>
-            <div className="space-y-4 text-[15px] text-uoft-body leading-relaxed">
-              <p>Official city boundaries don't always match how we actually define our neighbourhoods. This community project aims to map Toronto's neighbourhoods based on how the people who live here define them.</p>
-              <p>Help us crowdsource a new map of the city by drawing where you think your neighbourhood begins and ends.</p>
-              <div className="pt-2 border-t border-uoft-border text-sm">
-                <p>This is a volunteer project created by members of the <a href="https://civictech.ca" target="_blank" rel="noopener noreferrer" className="text-uoft-teal font-bold underline hover:text-uoft-blue">Civic Tech Toronto</a> community.</p>
-              </div>
+          }
+        >
+          <div className="space-y-4 text-[15px] text-uoft-body leading-relaxed">
+            <p>Official city boundaries don't always match how we actually define our neighbourhoods. This community project aims to map Toronto's neighbourhoods based on how the people who live here define them.</p>
+            <p>Help us crowdsource a new map of the city by drawing where you think your neighbourhood begins and ends.</p>
+            <div className="pt-2 border-t border-uoft-border text-sm">
+              <p>This is a volunteer project created by members of the <a href="https://civictech.ca" target="_blank" rel="noopener noreferrer" className="text-uoft-teal font-bold underline hover:text-uoft-blue">Civic Tech Toronto</a> community.</p>
             </div>
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleCloseWelcomeModal}
-                className="px-6 py-2.5 bg-uoft-blue text-white font-bold hover:bg-[#162d55] transition-colors"
-              >
-                Let's go
-              </button>
-            </div>
-          </motion.div>
-        </div>,
-        document.body
+          </div>
+        </Modal>
       )}
     </div>
   );
