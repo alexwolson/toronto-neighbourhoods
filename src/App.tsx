@@ -17,7 +17,7 @@ export default function App() {
   const [isAppSubmitted, setIsAppSubmitted] = useState(false);
 
   return (
-    <div className="flex flex-col-reverse md:flex-row h-[100dvh] w-full bg-white text-gray-900 overflow-hidden font-sans">
+    <div className="flex flex-col-reverse md:flex-row h-[100dvh] w-full bg-white overflow-hidden">
       <Sidebar 
         step={step}
         setStep={setStep}
