@@ -129,18 +129,6 @@ export default function Sidebar({
     }
   };
 
-  const stepClasses = (stepNumber: number) => {
-    if (step === stepNumber) return "text-gray-900";
-    if (step > stepNumber) return "text-gray-400";
-    return "text-gray-300";
-  };
-
-  const stepNumberClasses = (stepNumber: number) => {
-    if (step === stepNumber) return "bg-gray-900 text-white";
-    if (step > stepNumber) return "bg-gray-200 text-gray-500";
-    return "bg-gray-100 text-gray-300";
-  };
-
   return (
     <div className="w-full h-[45dvh] md:h-[100dvh] md:w-[24rem] bg-white shrink-0 overflow-y-auto border-t md:border-t-0 md:border-r border-uoft-border flex flex-col font-sans relative z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-[0_8px_32px_rgba(30,55,101,0.18)]">
 
@@ -186,208 +174,189 @@ export default function Sidebar({
       })}
     </div>
 
-      <div className="flex-1 flex flex-col pt-6 md:pt-8 pb-8 md:pb-32 px-5 md:px-6 lg:px-8">
+    <div className="flex-1 flex flex-col overflow-y-auto">
 
-        <div className="flex flex-col space-y-8">
-          
-          {isAppSubmitted ? (
-            <div className="bg-green-50 border text-center border-green-200 rounded-xl p-6 shadow-sm mt-4">
-              <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-6 h-6" />
+      {/* ── Non-submitted flow ── */}
+      {!isAppSubmitted && (
+        <>
+          {/* Step 1 — done (collapsed) */}
+          {step > 1 && homeLocation && (
+            <div className="bg-uoft-tint-step border-b border-uoft-border px-5 py-3 flex items-center gap-3 border-l-4 border-l-uoft-sky">
+              <div className="w-5 h-5 bg-uoft-teal rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0">✓</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] font-bold text-uoft-teal">Step 1 · Location pinned</div>
+                <div className="text-sm font-bold text-uoft-blue truncate">Pin dropped</div>
               </div>
-              <h4 className="font-bold text-gray-900 text-xl mb-2">Submission Received</h4>
-              <p className="text-gray-600 text-sm font-medium mb-4">You have already submitted a neighbourhood map. Thank you!</p>
-              <button 
-                onClick={() => setIsAppSubmitted(false)}
-                className="text-sm font-semibold tracking-wide text-green-700 bg-green-100 hover:bg-green-200 py-2.5 px-4 rounded-md transition-colors w-full border border-green-200"
+              <button
+                onClick={() => { setStep(1); setHomeLocation(null); setPolygonPoints([]); setIsFinished(false); }}
+                className="text-[11px] font-bold text-uoft-teal underline shrink-0"
               >
-                Edit my submission
+                Edit
               </button>
             </div>
-          ) : (
-            <>
-              {/* Step 1 */}
-              <div className="flex items-start space-x-4">
-            <span className={`mt-1 flex-shrink-0 flex items-center justify-center w-[1.375rem] h-[1.375rem] rounded-full text-[10px] font-bold ${stepNumberClasses(1)}`}>1</span>
-            <div className="flex-1">
-              <h3 className={`font-bold text-base leading-snug ${stepClasses(1)}`}>Find your area</h3>
-              <div className={`text-[15px] mt-1 leading-relaxed space-y-2 ${stepClasses(1)}`}>
-                <p>Pan and zoom the map to find where you live. Click the map to drop a pin.</p>
-                <p className="text-sm opacity-80">You don't need to pin your exact home &mdash; a nearby intersection or general area is completely fine.</p>
+          )}
+
+          {/* Step 1 — active */}
+          {step === 1 && (
+            <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6">
+              <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 1 of 4</div>
+              <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-2">Find your area</h2>
+              <p className="text-[14px] text-uoft-body leading-relaxed">Pan and zoom the map to find where you live. Click the map to drop a pin.</p>
+              <p className="text-[12px] text-uoft-muted mt-1.5 leading-relaxed">You don't need to pin your exact home — a nearby intersection or general area is fine.</p>
+            </div>
+          )}
+
+          {/* Step 2 — done (collapsed) */}
+          {step > 2 && neighborhoodName && (
+            <div className="bg-uoft-tint-step border-b border-uoft-border px-5 py-3 flex items-center gap-3 border-l-4 border-l-uoft-sky">
+              <div className="w-5 h-5 bg-uoft-teal rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0">✓</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] font-bold text-uoft-teal">Step 2 · Neighbourhood name</div>
+                <div className="text-sm font-bold text-uoft-blue truncate">{neighborhoodName}</div>
               </div>
-              
-              {step > 1 && homeLocation && !isAppSubmitted && (
-                <div className="mt-3">
-                  <button 
-                    onClick={() => {
-                      setStep(1);
-                      setHomeLocation(null);
-                      setPolygonPoints([]);
-                      setIsFinished(false);
-                    }}
-                    className="text-xs font-semibold text-gray-600 hover:text-gray-900 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
-                  >
-                    Redrop pin
-                  </button>
-                </div>
+              <button onClick={() => setStep(2)} className="text-[11px] font-bold text-uoft-teal underline shrink-0">Edit</button>
+            </div>
+          )}
+
+          {/* Step 2 — active */}
+          {step === 2 && (
+            <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6">
+              <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 2 of 4</div>
+              <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-3">What is this neighbourhood called?</h2>
+              <form onSubmit={(e) => { e.preventDefault(); if (neighborhoodName.trim()) setStep(3); }} className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  required
+                  name="neighborhood_name_input"
+                  value={neighborhoodName}
+                  onChange={(e) => setNeighborhoodName(e.target.value)}
+                  maxLength={150}
+                  placeholder="e.g. The Annex, Leslieville…"
+                  className="border-2 border-uoft-border px-3 py-2.5 text-[15px] text-uoft-blue bg-[#fafdff] focus:outline-none focus:border-uoft-blue w-full"
+                  autoComplete="off"
+                  data-1p-ignore="true"
+                />
+                <button
+                  type="submit"
+                  disabled={!neighborhoodName.trim()}
+                  className="bg-uoft-blue text-white text-[13px] font-bold py-2.5 px-5 hover:bg-[#162d55] transition-colors w-max disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Step 3 — done (collapsed) */}
+          {step > 3 && isFinished && (
+            <div className="bg-uoft-tint-step border-b border-uoft-border px-5 py-3 flex items-center gap-3 border-l-4 border-l-uoft-sky">
+              <div className="w-5 h-5 bg-uoft-teal rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0">✓</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] font-bold text-uoft-teal">Step 3 · Boundary drawn</div>
+                <div className="text-sm font-bold text-uoft-blue">{polygonPoints.length} points</div>
+              </div>
+              <button
+                onClick={() => { setStep(3); setPolygonPoints([]); setIsFinished(false); }}
+                className="text-[11px] font-bold text-uoft-teal underline shrink-0"
+              >
+                Redraw
+              </button>
+            </div>
+          )}
+
+          {/* Step 3 — active */}
+          {step === 3 && (
+            <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6">
+              <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 3 of 4</div>
+              <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-2">Draw the boundary</h2>
+              <p className="text-[14px] text-uoft-body leading-relaxed">Click around the edges of what you consider your neighbourhood. Connect back to the start point to close the shape.</p>
+              {polygonPoints.length > 0 && (
+                <button
+                  onClick={handleUndo}
+                  className="flex items-center gap-1.5 text-[13px] font-bold text-uoft-teal border-b-2 border-uoft-teal mt-4 pb-0.5 hover:text-uoft-blue hover:border-uoft-blue transition-colors"
+                >
+                  <Undo2 className="w-3.5 h-3.5" /> Undo last point
+                </button>
               )}
             </div>
-          </div>
+          )}
 
-          {/* Step 2 */}
-          {(step >= 2 || neighborhoodName) && (
-            <div className="flex items-start space-x-4 animate-in fade-in">
-              <span className={`mt-1 flex-shrink-0 flex items-center justify-center w-[1.375rem] h-[1.375rem] rounded-full text-[10px] font-bold  ${stepNumberClasses(2)}`}>2</span>
-              <div className="flex-1 w-full">
-                <h3 className={`font-bold text-base leading-snug  ${stepClasses(2)}`}>What is this neighbourhood called?</h3>
-                
-                {step === 2 && (
-                  <form className="mt-3 flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); if (neighborhoodName.trim()) setStep(3); }}>
-                    <input 
-                      type="text" 
-                      required
-                      name="neighborhood_name_input"
-                      value={neighborhoodName}
-                      onChange={(e) => setNeighborhoodName(e.target.value)}
-                      maxLength={150}
-                      placeholder="e.g. The Annex, Leslieville..."
-                      className="border border-gray-300 rounded-md px-3 py-2 text-[15px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 w-full"
-                      autoComplete="off"
-                      data-1p-ignore="true"
-                    />
-                    <button 
-                      type="submit"
-                      disabled={!neighborhoodName.trim()}
-                      className="bg-gray-900 text-white text-[13px] font-bold tracking-wide py-2.5 px-4 rounded-md hover:bg-black transition-colors w-max disabled:opacity-50"
-                    >
-                      Next
-                    </button>
-                  </form>
-                )}
-
-                {step > 2 && (
-                   <div className="mt-2 flex flex-colitems-start gap-2">
-                     <p className="font-bold text-gray-900 text-base">{neighborhoodName}</p>
-                     {!isAppSubmitted && (
-                       <button
-                         onClick={() => setStep(2)}
-                         className="text-xs text-gray-500 hover:text-gray-900 hover:underline mt-2 inline-block w-fit"
-                       >
-                         Edit name
-                       </button>
-                     )}
-                   </div>
-                )}
-              </div>
+          {/* Step 4 — upcoming placeholder */}
+          {step < 4 && (
+            <div className="border-l-4 border-l-[#e0e8f4] px-5 py-3 flex items-center gap-3 opacity-40 border-b border-uoft-border">
+              <div className="w-5 h-5 bg-[#e0e8f4] rounded-full flex items-center justify-center text-uoft-label text-[10px] font-black shrink-0">4</div>
+              <div className="text-[13px] font-bold text-uoft-label">Tell us more (optional)</div>
             </div>
           )}
 
-          {/* Step 3 */}
-          {(step >= 3) && (
-            <div className="flex items-start space-x-4 animate-in fade-in">
-              <span className={`mt-1 flex-shrink-0 flex items-center justify-center w-[1.375rem] h-[1.375rem] rounded-full text-[10px] font-bold ${stepNumberClasses(3)}`}>3</span>
-              <div className="flex-1">
-                <h3 className={`font-bold text-base leading-snug ${stepClasses(3)}`}>Draw the boundary</h3>
-                <p className={`text-[15px] mt-1 leading-relaxed ${stepClasses(3)}`}>
-                  Click around the edges of what you consider your neighbourhood. Connect to the start point to finish.
-                </p>
-                
-                {step === 3 && polygonPoints.length > 0 && (
-                  <div className="flex space-x-3 mt-4">
-                    <button 
-                      onClick={handleUndo}
-                      className="flex items-center text-xs font-semibold text-gray-700 hover:text-gray-900 border border-gray-300 rounded-md px-3 py-1.5 bg-white shadow-sm hover:bg-gray-50"
-                    >
-                      <Undo2 className="w-3.5 h-3.5 mr-1.5" /> Undo
-                    </button>
-                  </div>
-                )}
-
-                {step > 3 && (
-                   <div className="mt-3">
-                    {!isAppSubmitted && (
-                      <button 
-                        onClick={() => {
-                          setStep(3);
-                          setPolygonPoints([]);
-                          setIsFinished(false);
-                        }}
-                        className="text-xs font-semibold text-gray-600 hover:text-gray-900 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
-                      >
-                        Redraw shape
-                      </button>
-                    )}
-                   </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Step 4 (Submit Form) */}
+          {/* Step 4 — active (form) */}
           {step === 4 && (
-            <div className="flex items-start space-x-4 animate-in fade-in slide-in-from-top-4 pt-4 border-t border-gray-200">
-               <div className="w-full">
-                  <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-                    
-                    <div className="flex flex-col gap-2">
-                       <h3 className="font-bold text-[16px] leading-snug text-gray-900">
-                          How would you say these boundaries changed over the years? <span className="text-gray-500 font-normal">(optional)</span>
-                        </h3>
-                        <p className="text-gray-600 text-[14px] mb-1">
-                          For example, has the neighbourhood stretched or grown in one direction?
-                        </p>
-                        <textarea
-                          name="changes_text"
-                          rows={3}
-                          maxLength={5000}
-                          className="border border-gray-300 rounded-md p-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 resize-y"
-                          value={changesText}
-                          onChange={(e) => setChangesText(e.target.value)}
-                          autoComplete="off"
-                          data-1p-ignore="true"
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                       <h3 className="font-bold text-[16px] leading-snug text-gray-900">
-                          Does this neighbourhood go by any other names, or has it gone by other names in the past? <span className="text-gray-500 font-normal">(optional)</span>
-                        </h3>
-                        <p className="text-gray-600 text-[14px] mb-1">
-                          For example, sections of The Danforth could also be called Greektown.
-                        </p>
-                        <textarea
-                          name="other_names_text"
-                          rows={3}
-                          maxLength={1000}
-                          className="border border-gray-300 rounded-md p-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 resize-y"
-                          value={otherNamesText}
-                          onChange={(e) => setOtherNamesText(e.target.value)}
-                          autoComplete="off"
-                          data-1p-ignore="true"
-                        />
-                    </div>
-
-                    <div className="pt-2">
-                      {submitError && <div className="text-red-500 text-sm mb-3">{submitError}</div>}
-                      <button 
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="bg-gray-900 text-white text-[15px] font-bold py-3 px-8 hover:bg-black transition-colors disabled:opacity-50 rounded-md shadow-sm w-full md:w-auto"
-                      >
-                        {isSubmitting ? "Submitting..." : "Submit"}
-                      </button>
-                    </div>
-
-                  </form>
+            <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6 flex flex-col gap-5">
+              <div>
+                <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 4 of 4</div>
+                <h2 className="text-[17px] font-black text-uoft-blue leading-snug">Tell us more</h2>
               </div>
+              <form id="submit-form" className="flex flex-col gap-5" onSubmit={handleSubmit}>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[14px] font-bold text-uoft-blue leading-snug">
+                    How would you say these boundaries changed over the years?{' '}
+                    <span className="font-normal text-uoft-muted">(optional)</span>
+                  </label>
+                  <p className="text-[12px] text-uoft-muted">For example, has the neighbourhood stretched in one direction?</p>
+                  <textarea
+                    name="changes_text"
+                    rows={3}
+                    maxLength={5000}
+                    className="border-2 border-uoft-border p-3 text-[14px] text-uoft-blue focus:outline-none focus:border-uoft-blue resize-y bg-white"
+                    value={changesText}
+                    onChange={(e) => setChangesText(e.target.value)}
+                    autoComplete="off"
+                    data-1p-ignore="true"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[14px] font-bold text-uoft-blue leading-snug">
+                    Does this neighbourhood go by any other names?{' '}
+                    <span className="font-normal text-uoft-muted">(optional)</span>
+                  </label>
+                  <p className="text-[12px] text-uoft-muted">For example, parts of The Danforth are also called Greektown.</p>
+                  <textarea
+                    name="other_names_text"
+                    rows={3}
+                    maxLength={1000}
+                    className="border-2 border-uoft-border p-3 text-[14px] text-uoft-blue focus:outline-none focus:border-uoft-blue resize-y bg-white"
+                    value={otherNamesText}
+                    onChange={(e) => setOtherNamesText(e.target.value)}
+                    autoComplete="off"
+                    data-1p-ignore="true"
+                  />
+                </div>
+                {submitError && <div className="text-red-600 text-sm">{submitError}</div>}
+              </form>
             </div>
           )}
 
-            </>
-          )}
+        </>
+      )}
 
+      {/* ── Already-submitted state ── */}
+      {isAppSubmitted && (
+        <div className="bg-uoft-tint-light border border-uoft-border text-center p-6 m-4">
+          <div className="w-12 h-12 bg-uoft-tint-light border-2 border-uoft-teal text-uoft-teal flex items-center justify-center mx-auto mb-4">
+            <MapPin className="w-6 h-6" />
+          </div>
+          <h4 className="font-black text-uoft-blue text-lg mb-2">Submission Received</h4>
+          <p className="text-uoft-body text-sm mb-4">You have already submitted a neighbourhood map. Thank you!</p>
+          <button
+            onClick={() => setIsAppSubmitted(false)}
+            className="text-sm font-bold text-uoft-teal border-2 border-uoft-teal py-2.5 px-4 hover:bg-uoft-tint-light transition-colors w-full"
+          >
+            Edit my submission
+          </button>
         </div>
-      </div>
+      )}
+
+    </div>
       <div className="p-6 text-xs text-gray-500 border-t border-gray-200 bg-gray-50 mt-auto leading-relaxed flex flex-col gap-2">
         <p>Inspired by The New York Times' <a href="https://www.nytimes.com/interactive/2022/12/02/upshot/draw-your-nyc-neighborhood.html" target="_blank" rel="noopener noreferrer" className="text-gray-900 underline hover:text-black">"Draw Your NYC Neighborhood"</a> interactive project.</p>
         <button 
