@@ -5,6 +5,9 @@ import { Undo2, X, MapPin } from "lucide-react";
 import type { LatLngTuple } from "leaflet";
 import { collection, addDoc, doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "../firebase";
+import logoUofT          from '../assets/logos/logo-uoft.svg?url';
+import logoSchoolCities  from '../assets/logos/logo-school-of-cities.svg?url';
+import logoCarte         from '../assets/logos/logo-carte.svg?url';
 
 interface SidebarProps {
   step: 1 | 2 | 3 | 4;
@@ -139,11 +142,51 @@ export default function Sidebar({
   };
 
   return (
-    <div className="w-full h-[45dvh] md:h-[100dvh] md:w-[24rem] bg-white shrink-0 overflow-y-auto border-t md:border-t-0 md:border-r border-gray-200 flex flex-col font-sans relative z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-sm">
-      <div className="flex-1 flex flex-col pt-6 md:pt-8 pb-8 md:pb-32 px-5 md:px-6 lg:px-8">
-        <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-5 md:mb-6 leading-tight pb-4 md:pb-6 border-b border-gray-200 tracking-tight">
-          Toronto Neighbourhoods
+    <div className="w-full h-[45dvh] md:h-[100dvh] md:w-[24rem] bg-white shrink-0 overflow-y-auto border-t md:border-t-0 md:border-r border-uoft-border flex flex-col font-sans relative z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-[0_8px_32px_rgba(30,55,101,0.18)]">
+
+    {/* Dark UofT Blue header */}
+    <div className="bg-uoft-blue relative overflow-hidden shrink-0">
+      {/* Subtle teal gradient overlay for depth */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(135deg, rgba(0,120,148,0.25) 0%, transparent 60%)' }} />
+      <div className="relative z-10 px-5 pt-5 pb-4 md:px-6 md:pt-6 md:pb-5">
+        <h1 className="text-2xl md:text-[1.65rem] font-black text-white leading-tight tracking-tight">
+          Toronto<br />Neighbourhoods
         </h1>
+      </div>
+      {/* Teal gradient rule */}
+      <div className="h-1" style={{ background: 'linear-gradient(90deg, #007894 0%, #6FC7EA 100%)' }} />
+    </div>
+
+    {/* Progress tabs */}
+    <div className="flex bg-uoft-tint-bg border-b border-uoft-border shrink-0">
+      {([
+        { n: 1, label: 'Pin' },
+        { n: 2, label: 'Name' },
+        { n: 3, label: 'Draw' },
+        { n: 4, label: 'Submit' },
+      ] as const).map(({ n, label }) => {
+        const isDone   = step > n || (isAppSubmitted && n <= 4);
+        const isActive = step === n && !isAppSubmitted;
+        return (
+          <div
+            key={n}
+            className={[
+              'flex-1 text-center py-2 text-[11px] font-bold border-r border-uoft-border last:border-r-0',
+              isDone   ? 'text-uoft-teal bg-uoft-tint-light' : '',
+              isActive ? 'text-uoft-blue bg-white border-b-2 border-b-uoft-blue -mb-px' : '',
+              !isDone && !isActive ? 'text-uoft-label' : '',
+            ].join(' ')}
+          >
+            <span className="block text-sm font-black leading-none mb-0.5">
+              {isDone ? '✓' : n}
+            </span>
+            {label}
+          </div>
+        );
+      })}
+    </div>
+
+      <div className="flex-1 flex flex-col pt-6 md:pt-8 pb-8 md:pb-32 px-5 md:px-6 lg:px-8">
 
         <div className="flex flex-col space-y-8">
           
