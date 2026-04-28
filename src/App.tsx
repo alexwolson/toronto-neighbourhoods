@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { useState } from "react";
 import type { LatLngTuple } from "leaflet";
 import MapEditor from "./components/MapEditor";
