@@ -1,6 +1,6 @@
 # Draw Your Toronto Neighbourhood
 
-An interactive map tool for drawing and submitting the boundaries of your Toronto neighbourhood, built for the University of Toronto School of Cities research project.
+An interactive map tool for drawing and submitting the boundaries of your Toronto neighbourhood.
 
 ## Run Locally
 
