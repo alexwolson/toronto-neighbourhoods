@@ -357,15 +357,46 @@ export default function Sidebar({
       )}
 
     </div>
-      <div className="p-6 text-xs text-gray-500 border-t border-gray-200 bg-gray-50 mt-auto leading-relaxed flex flex-col gap-2">
-        <p>Inspired by The New York Times' <a href="https://www.nytimes.com/interactive/2022/12/02/upshot/draw-your-nyc-neighborhood.html" target="_blank" rel="noopener noreferrer" className="text-gray-900 underline hover:text-black">"Draw Your NYC Neighborhood"</a> interactive project.</p>
-        <button 
-          onClick={() => setIsDataModalOpen(true)}
-          className="text-left text-gray-900 underline hover:text-black inline-block font-semibold w-fit"
+    {/* Submit bar — step 4 only */}
+    {step === 4 && !isAppSubmitted && (
+      <div className="bg-uoft-blue px-5 py-4 flex items-center justify-between gap-4 shrink-0">
+        <p className="text-uoft-sky text-[11px] leading-snug max-w-[140px]">Your map will be added to our dataset</p>
+        <button
+          type="submit"
+          form="submit-form"
+          disabled={isSubmitting}
+          className="text-white text-[13px] font-bold border-2 border-white py-2.5 px-5 hover:bg-[#162d55] transition-colors disabled:opacity-50 shrink-0"
         >
-          What data are we storing?
+          {isSubmitting ? 'Submitting…' : 'Submit my map →'}
         </button>
       </div>
+    )}
+
+    {/* Logo strip */}
+    <div className="bg-white border-t border-uoft-border px-4 py-3 flex items-center justify-between gap-2 shrink-0" style={{ minHeight: '56px' }}>
+      <div className="flex-1 flex items-center justify-center">
+        <img src={logoUofT} alt="University of Toronto" style={{ maxHeight: '28px', width: 'auto', maxWidth: '100%' }} />
+      </div>
+      <div className="w-px h-8 bg-uoft-border shrink-0" />
+      <div className="flex-1 flex items-center justify-center">
+        <img src={logoSchoolCities} alt="School of Cities" style={{ maxHeight: '28px', width: 'auto', maxWidth: '100%' }} />
+      </div>
+      <div className="w-px h-8 bg-uoft-border shrink-0" />
+      <div className="flex-1 flex items-center justify-center">
+        <img src={logoCarte} alt="Carte" style={{ maxHeight: '44px', width: 'auto', maxWidth: '100%' }} />
+      </div>
+    </div>
+
+    {/* Text footer */}
+    <div className="px-5 py-2.5 text-[11px] text-uoft-muted bg-uoft-tint-bg border-t border-uoft-border shrink-0 flex justify-between gap-3 leading-relaxed">
+      <p>Inspired by the NYT's <a href="https://www.nytimes.com/interactive/2022/12/02/upshot/draw-your-nyc-neighborhood.html" target="_blank" rel="noopener noreferrer" className="text-uoft-teal font-bold underline hover:text-uoft-blue">"Draw Your NYC Neighborhood"</a></p>
+      <button
+        onClick={() => setIsDataModalOpen(true)}
+        className="text-uoft-teal font-bold underline hover:text-uoft-blue shrink-0"
+      >
+        Data info
+      </button>
+    </div>
 
       {isDataModalOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
