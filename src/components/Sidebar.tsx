@@ -400,32 +400,32 @@ export default function Sidebar({
 
       {isDataModalOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative animate-in fade-in zoom-in-95 duration-200">
-            <button 
+          <div className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative animate-in fade-in zoom-in-95 duration-200">
+            <button
               onClick={() => setIsDataModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-1.5 transition-colors"
+              className="absolute top-4 right-4 text-uoft-teal bg-uoft-tint-light hover:bg-uoft-tint-bg p-1.5 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-xl font-bold text-gray-900 mb-4">What data we store</h3>
-            <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
+            <h3 className="text-xl font-black text-uoft-blue mb-4">What data we store</h3>
+            <div className="space-y-4 text-sm text-uoft-body leading-relaxed">
               <p>When you submit your map, we store the following data in our database securely:</p>
               <ul className="list-disc pl-5 space-y-2">
-                <li><strong className="text-gray-800">Your neighbourhood's name</strong> (including alternate names you might suggest).</li>
-                <li><strong className="text-gray-800">The pinned location</strong> (a single latitude/longitude coordinate representing the area you selected, not necessarily your home).</li>
-                <li><strong className="text-gray-800">The boundary polygon</strong> (the shape of the neighbourhood you drew).</li>
-                <li><strong className="text-gray-800">Optional feedback</strong> on how the neighbourhood is changing.</li>
-                <li><strong className="text-gray-800">A timestamp</strong> of when the submission was made.</li>
+                <li><strong className="text-uoft-blue">Your neighbourhood's name</strong> (including alternate names you might suggest).</li>
+                <li><strong className="text-uoft-blue">The pinned location</strong> (a single latitude/longitude coordinate representing the area you selected, not necessarily your home).</li>
+                <li><strong className="text-uoft-blue">The boundary polygon</strong> (the shape of the neighbourhood you drew).</li>
+                <li><strong className="text-uoft-blue">Optional feedback</strong> on how the neighbourhood is changing.</li>
+                <li><strong className="text-uoft-blue">A timestamp</strong> of when the submission was made.</li>
               </ul>
               <p>We <strong>do not</strong> collect your name, email address, IP address, or any personally identifiable information (PII). No authentication is required to participate.</p>
-              <div className="pt-2 border-t border-gray-100">
-                <p>This is a project created by members of the <a href="https://civictech.ca" target="_blank" rel="noopener noreferrer" className="text-gray-900 underline hover:text-black">Civic Tech Toronto</a> community.</p>
+              <div className="pt-2 border-t border-uoft-border">
+                <p>This is a project created by members of the <a href="https://civictech.ca" target="_blank" rel="noopener noreferrer" className="text-uoft-teal font-bold underline hover:text-uoft-blue">Civic Tech Toronto</a> community.</p>
               </div>
             </div>
             <div className="mt-6 flex justify-end">
-              <button 
+              <button
                 onClick={() => setIsDataModalOpen(false)}
-                className="px-4 py-2 bg-gray-900 text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
+                className="px-5 py-2.5 bg-uoft-blue text-white font-bold hover:bg-[#162d55] transition-colors"
               >
                 Got it
               </button>
@@ -437,25 +437,25 @@ export default function Sidebar({
 
       {isWelcomeModalOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative animate-in fade-in zoom-in-95 duration-200">
-            <button 
+          <div className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative animate-in fade-in zoom-in-95 duration-200">
+            <button
               onClick={handleCloseWelcomeModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-1.5 transition-colors"
+              className="absolute top-4 right-4 text-uoft-teal bg-uoft-tint-light hover:bg-uoft-tint-bg p-1.5 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-2xl font-serif font-bold text-gray-900 mb-4 pr-6 leading-tight">Welcome to Draw Your Toronto Neighbourhood</h3>
-            <div className="space-y-4 text-[15px] text-gray-600 leading-relaxed">
+            <h3 className="text-2xl font-black text-uoft-blue mb-4 pr-6 leading-tight">Draw Your Toronto Neighbourhood</h3>
+            <div className="space-y-4 text-[15px] text-uoft-body leading-relaxed">
               <p>Official city boundaries don't always match how we actually define our neighbourhoods. This community project aims to map Toronto's neighbourhoods based on how the people who live here define them.</p>
               <p>Help us crowdsource a new map of the city by drawing where you think your neighbourhood begins and ends.</p>
-              <div className="pt-2 border-t border-gray-100 text-sm">
-                <p>This is a volunteer project created by members of the <a href="https://civictech.ca" target="_blank" rel="noopener noreferrer" className="text-gray-900 underline hover:text-black">Civic Tech Toronto</a> community.</p>
+              <div className="pt-2 border-t border-uoft-border text-sm">
+                <p>This is a volunteer project created by members of the <a href="https://civictech.ca" target="_blank" rel="noopener noreferrer" className="text-uoft-teal font-bold underline hover:text-uoft-blue">Civic Tech Toronto</a> community.</p>
               </div>
             </div>
             <div className="mt-6 flex justify-end">
-              <button 
+              <button
                 onClick={handleCloseWelcomeModal}
-                className="px-6 py-2.5 bg-gray-900 text-white font-bold rounded-md hover:bg-black transition-colors shadow-sm"
+                className="px-6 py-2.5 bg-uoft-blue text-white font-bold hover:bg-[#162d55] transition-colors"
               >
                 Let's go
               </button>
