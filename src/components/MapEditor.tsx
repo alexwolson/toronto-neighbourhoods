@@ -241,7 +241,7 @@ export default function MapEditor({
               }}
             >
               {isFirstPoint && !isFinished && polygonPoints.length > 2 && (
-                <Tooltip permanent direction="right" className="bg-transparent border-none text-gray-900 font-semibold shadow-none text-sm">
+                <Tooltip permanent direction="right" className="bg-transparent border-none text-uoft-blue font-semibold shadow-none text-sm">
                   Click to close shape
                 </Tooltip>
               )}

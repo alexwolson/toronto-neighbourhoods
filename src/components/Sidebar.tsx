@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
 import type { Dispatch, SetStateAction, FormEvent } from "react";
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 import { Undo2, X, MapPin } from "lucide-react";
 import type { LatLngTuple } from "leaflet";
 import { collection, addDoc, doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore";
@@ -400,9 +401,16 @@ export default function Sidebar({
 
       {isDataModalOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative animate-in fade-in zoom-in-95 duration-200">
+          <motion.div
+            className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
             <button
               onClick={() => setIsDataModalOpen(false)}
+              aria-label="Close"
               className="absolute top-4 right-4 text-uoft-teal bg-uoft-tint-light hover:bg-uoft-tint-bg p-1.5 transition-colors"
             >
               <X className="w-5 h-5" />
@@ -430,16 +438,23 @@ export default function Sidebar({
                 Got it
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>,
         document.body
       )}
 
       {isWelcomeModalOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative animate-in fade-in zoom-in-95 duration-200">
+          <motion.div
+            className="bg-white shadow-[0_8px_32px_rgba(30,55,101,0.2)] max-w-md w-full p-6 relative"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
             <button
               onClick={handleCloseWelcomeModal}
+              aria-label="Close"
               className="absolute top-4 right-4 text-uoft-teal bg-uoft-tint-light hover:bg-uoft-tint-bg p-1.5 transition-colors"
             >
               <X className="w-5 h-5" />
@@ -460,7 +475,7 @@ export default function Sidebar({
                 Let's go
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>,
         document.body
       )}
