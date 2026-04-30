@@ -1,6 +1,0 @@
-{
-  "name": "Draw Your Toronto Neighbourhood",
-  "description": "An interactive map tool where users can crowdsource boundaries of their Toronto neighbourhoods.",
-  "requestFramePermissions": [],
-  "majorCapabilities": []
-}

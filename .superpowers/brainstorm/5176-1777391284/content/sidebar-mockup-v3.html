@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sidebar — UofT v3</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Arial, sans-serif;
+  background: #e8edf4;
+  padding: 32px 24px;
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.page-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+.page-title { font-size: 15px; font-weight: 700; color: #1E3765; font-family: Arial, sans-serif; }
+.page-sub { font-size: 12px; color: #666; font-family: Arial, sans-serif; margin-bottom: 12px; }
+
+.row { display: flex; gap: 24px; align-items: flex-start; }
+
+/* ─── Sidebar shell ─── */
+.sidebar {
+  width: 340px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(30,55,101,0.18), 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+}
+
+/* ─── Header ─── */
+.hdr {
+  background: #1E3765;
+  position: relative;
+  overflow: hidden;
+}
+.hdr::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,120,148,0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hdr-inner {
+  position: relative;
+  z-index: 1;
+  padding: 22px 22px 20px;
+}
+.hdr h1 {
+  color: #fff;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+.hdr-rule {
+  height: 4px;
+  background: linear-gradient(90deg, #007894 0%, #6FC7EA 100%);
+}
+
+/* ─── Progress tabs ─── */
+.progress-bar {
+  display: flex;
+  background: #f0f4fa;
+  border-bottom: 1px solid #dce4f0;
+}
+.progress-step {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9aaccb;
+  border-right: 1px solid #dce4f0;
+  position: relative;
+}
+.progress-step:last-child { border-right: none; }
+.progress-step.done {
+  color: #007894;
+  background: #e8f6fa;
+}
+.progress-step.active {
+  color: #1E3765;
+  background: #fff;
+  border-bottom: 3px solid #1E3765;
+  margin-bottom: -1px;
+}
+.progress-step .num {
+  display: block;
+  font-size: 14px;
+  font-weight: 900;
+  margin-bottom: 1px;
+  line-height: 1;
+}
+
+/* ─── Body ─── */
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Active step panel ─── */
+.active-panel {
+  background: #fff;
+  padding: 22px 22px 20px;
+  border-left: 4px solid #1E3765;
+}
+.active-panel .step-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #007894;
+  margin-bottom: 6px;
+}
+.active-panel h2 {
+  font-size: 18px;
+  font-weight: 900;
+  color: #1E3765;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.active-panel p {
+  font-size: 14px;
+  color: #3a4a60;
+  line-height: 1.55;
+}
+.active-panel p.hint {
+  font-size: 12px;
+  color: #7a8fa8;
+  margin-top: 6px;
+}
+
+/* ─── Input ─── */
+.inp {
+  width: 100%;
+  border: 2px solid #c5d4e8;
+  padding: 11px 13px;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  color: #1E3765;
+  margin-top: 12px;
+  outline: none;
+  background: #fafdff;
+}
+.inp:focus { border-color: #1E3765; background: #fff; }
+
+/* ─── Buttons ─── */
+.btn-primary {
+  display: inline-block;
+  background: #1E3765;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  padding: 11px 22px;
+  border: none;
+  cursor: pointer;
+  margin-top: 14px;
+}
+
+.btn-secondary {
+  display: inline-block;
+  background: transparent;
+  color: #007894;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  padding: 7px 0;
+  border: none;
+  border-bottom: 2px solid #007894;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* ─── Completed steps (collapsed) ─── */
+.done-section {
+  background: #f4f7fb;
+  border-bottom: 1px solid #dce4f0;
+  padding: 12px 22px 12px 26px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid #6FC7EA;
+}
+.done-check {
+  width: 20px;
+  height: 20px;
+  background: #007894;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 11px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.done-text { flex: 1; }
+.done-text .done-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #007894;
+}
+.done-text .done-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1E3765;
+  margin-top: 1px;
+}
+.done-edit {
+  font-size: 11px;
+  color: #007894;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ─── Upcoming steps ─── */
+.upcoming-section {
+  background: #fff;
+  border-bottom: 1px solid #dce4f0;
+  padding: 12px 22px 12px 26px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid #e0e8f4;
+  opacity: 0.45;
+}
+.upcoming-num {
+  width: 20px;
+  height: 20px;
+  background: #e0e8f4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9aaccb;
+  font-size: 11px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.upcoming-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #9aaccb;
+}
+
+/* ─── Submit bar ─── */
+.submit-bar {
+  background: #1E3765;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.submit-bar .submit-cta {
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  background: none;
+  border: 2px solid white;
+  padding: 10px 22px;
+  cursor: pointer;
+}
+.submit-bar .submit-note {
+  color: #6FC7EA;
+  font-size: 11px;
+  font-weight: 400;
+  max-width: 130px;
+  line-height: 1.4;
+}
+
+/* ─── Footer ─── */
+.footer {
+  background: #0d2548;
+  padding: 14px 22px;
+  font-size: 11px;
+  color: #7a9cc0;
+  line-height: 1.6;
+}
+.footer a { color: #6FC7EA; text-decoration: underline; font-weight: 700; }
+
+/* ─── Annotations ─── */
+.notes {
+  width: 180px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 48px;
+}
+.note {
+  font-size: 11px;
+  color: #444;
+  background: #fff;
+  border-radius: 6px;
+  padding: 8px 10px;
+  border-left: 3px solid #1E3765;
+  line-height: 1.5;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  font-family: Arial, sans-serif;
+}
+.note strong { color: #1E3765; display: block; margin-bottom: 2px; }
+.note.teal { border-left-color: #007894; }
+.note.sky { border-left-color: #6FC7EA; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="page-title">Sidebar Design — v3 (no eyebrow, no ALL CAPS)</div>
+  <p class="page-sub">Step 3 active state shown</p>
+
+  <div class="row">
+
+    <!-- Left notes -->
+    <div class="notes">
+      <div class="note"><strong>No eyebrow</strong>Header is just the project title — clean, no sub-brand</div>
+      <div class="note teal" style="margin-top:12px;"><strong>Teal gradient rule</strong>4px bar under header adds colour without text</div>
+      <div class="note sky" style="margin-top:8px;"><strong>Progress tabs</strong>Title case numbers + short labels. Active tab underlined in UofT Blue.</div>
+      <div class="note" style="margin-top:10px;"><strong>Active step border</strong>4px UofT Blue left border anchors the current step</div>
+      <div class="note teal" style="margin-top:8px;"><strong>Step label</strong>Title case, teal — no caps</div>
+      <div class="note sky" style="margin-top:60px;"><strong>Done steps</strong>Collapsed, sky blue left border, teal check circle</div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <div class="hdr">
+        <div class="hdr-inner">
+          <h1>Toronto<br>Neighbourhoods</h1>
+        </div>
+      </div>
+      <div class="hdr-rule"></div>
+
+      <div class="progress-bar">
+        <div class="progress-step done"><span class="num">✓</span>Pin</div>
+        <div class="progress-step done"><span class="num">✓</span>Name</div>
+        <div class="progress-step active"><span class="num">3</span>Draw</div>
+        <div class="progress-step"><span class="num">4</span>Submit</div>
+      </div>
+
+      <div class="body">
+
+        <div class="done-section">
+          <div class="done-check">✓</div>
+          <div class="done-text">
+            <div class="done-label">Step 1 · Location pinned</div>
+            <div class="done-value">Near Bloor &amp; Spadina</div>
+          </div>
+          <span class="done-edit">Edit</span>
+        </div>
+
+        <div class="done-section">
+          <div class="done-check">✓</div>
+          <div class="done-text">
+            <div class="done-label">Step 2 · Neighbourhood name</div>
+            <div class="done-value">The Annex</div>
+          </div>
+          <span class="done-edit">Edit</span>
+        </div>
+
+        <div class="active-panel">
+          <div class="step-label">Step 3 of 4</div>
+          <h2>Draw the boundary</h2>
+          <p>Click around the edges of what you consider your neighbourhood. Connect back to the start point to close the shape.</p>
+          <p class="hint">You don't need to be precise — general boundaries are fine.</p>
+          <button class="btn-secondary">↩ Undo last point</button>
+        </div>
+
+        <div class="upcoming-section">
+          <div class="upcoming-num">4</div>
+          <div class="upcoming-label">Tell us more (optional)</div>
+        </div>
+
+      </div>
+
+      <div class="submit-bar">
+        <div class="submit-note">Your map will be added to our dataset</div>
+        <button class="submit-cta">Submit my map →</button>
+      </div>
+
+      <div class="footer">
+        Inspired by the NYT's <a href="#">"Draw Your NYC Neighborhood"</a>. &nbsp;
+        <a href="#">What data do we store?</a>
+      </div>
+
+    </div>
+
+    <!-- Right notes -->
+    <div class="notes">
+      <div class="note" style="margin-top:0;"><strong>Arial 900 headings</strong>Heavy weight throughout — no lighter fonts</div>
+      <div class="note teal" style="margin-top:72px;"><strong>Title case everywhere</strong>Step labels, buttons, tabs — sentence/title case only</div>
+      <div class="note sky" style="margin-top:60px;"><strong>Secondary action</strong>Underline-border link style for low-priority actions</div>
+      <div class="note" style="margin-top:70px;"><strong>Map elements → UofT Blue</strong>Home pin, polygon, boundary all use #1E3765</div>
+      <div class="note teal" style="margin-top:90px;"><strong>Submit bar</strong>UofT Blue strip, outlined white button — strong anchor</div>
+      <div class="note sky" style="margin-top:8px;"><strong>Dark footer</strong>Deeper navy, sky blue links</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

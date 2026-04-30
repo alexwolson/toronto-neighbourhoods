@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logo Placement v2</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Arial, sans-serif;
+  background: #e8edf4;
+  padding: 32px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+.page-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; }
+.page-title { font-size: 15px; font-weight: 700; color: #1E3765; font-family: Arial, sans-serif; }
+.page-sub { font-size: 12px; color: #666; font-family: Arial, sans-serif; }
+
+.row { display: flex; gap: 32px; align-items: flex-start; justify-content: center; }
+
+.sidebar {
+  width: 340px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(30,55,101,0.18), 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+}
+
+.hdr { background: #1E3765; position: relative; overflow: hidden; }
+.hdr::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,120,148,0.25) 0%, transparent 60%); pointer-events: none; }
+.hdr-inner { position: relative; z-index: 1; padding: 22px 22px 20px; }
+.hdr h1 { color: #fff; font-size: 26px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; }
+.hdr-rule { height: 4px; background: linear-gradient(90deg, #007894 0%, #6FC7EA 100%); }
+
+.progress-bar { display: flex; background: #f0f4fa; border-bottom: 1px solid #dce4f0; }
+.progress-step { flex: 1; text-align: center; padding: 8px 4px 7px; font-size: 11px; font-weight: 700; color: #9aaccb; border-right: 1px solid #dce4f0; }
+.progress-step:last-child { border-right: none; }
+.progress-step.done { color: #007894; background: #e8f6fa; }
+.progress-step.active { color: #1E3765; background: #fff; border-bottom: 3px solid #1E3765; margin-bottom: -1px; }
+.progress-step .num { display: block; font-size: 14px; font-weight: 900; margin-bottom: 1px; line-height: 1; }
+
+.step-done { background: #f4f7fb; border-bottom: 1px solid #dce4f0; padding: 11px 22px 11px 26px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #6FC7EA; }
+.chk { width: 20px; height: 20px; background: #007894; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 900; flex-shrink: 0; }
+.done-lbl { font-size: 11px; font-weight: 700; color: #007894; }
+.done-val { font-size: 14px; font-weight: 700; color: #1E3765; margin-top: 1px; }
+
+.active-panel { padding: 20px 22px 20px; border-left: 4px solid #1E3765; flex: 1; }
+.step-label { font-size: 12px; font-weight: 700; color: #007894; margin-bottom: 6px; }
+.active-panel h2 { font-size: 17px; font-weight: 900; color: #1E3765; line-height: 1.2; margin-bottom: 8px; }
+.active-panel p { font-size: 13px; color: #3a4a60; line-height: 1.5; }
+
+/* ─── LOGO STRIP ─── */
+.logo-strip {
+  background: #fff;
+  border-top: 1px solid #dce4f0;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.logo-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.logo-item img {
+  max-height: 30px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+.logo-divider { width: 1px; height: 28px; background: #dce4f0; flex-shrink: 0; }
+
+.footer-text {
+  background: #f0f4fa;
+  border-top: 1px solid #dce4f0;
+  padding: 10px 22px;
+  font-size: 11px;
+  color: #7a8fa8;
+  line-height: 1.6;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.footer-text a { color: #007894; font-weight: 700; text-decoration: underline; }
+
+.notes { width: 200px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; padding-top: 8px; }
+.note { font-size: 11px; color: #444; background: #fff; border-radius: 6px; padding: 8px 10px; border-left: 3px solid #1E3765; line-height: 1.5; box-shadow: 0 1px 4px rgba(0,0,0,0.07); font-family: Arial, sans-serif; }
+.note strong { color: #1E3765; display: block; margin-bottom: 2px; }
+.note.teal { border-left-color: #007894; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="page-title">Logo Placement — White strip at base</div>
+  <p class="page-sub">All three logos equal billing, light background, real SVGs</p>
+
+  <div class="row">
+
+    <div class="sidebar">
+      <div class="hdr">
+        <div class="hdr-inner"><h1>Toronto<br>Neighbourhoods</h1></div>
+      </div>
+      <div class="hdr-rule"></div>
+
+      <div class="progress-bar">
+        <div class="progress-step done"><span class="num">✓</span>Pin</div>
+        <div class="progress-step done"><span class="num">✓</span>Name</div>
+        <div class="progress-step active"><span class="num">3</span>Draw</div>
+        <div class="progress-step"><span class="num">4</span>Submit</div>
+      </div>
+
+      <div class="step-done">
+        <div class="chk">✓</div>
+        <div><div class="done-lbl">Step 1 · Location pinned</div><div class="done-val">Near Bloor &amp; Spadina</div></div>
+      </div>
+      <div class="step-done">
+        <div class="chk">✓</div>
+        <div><div class="done-lbl">Step 2 · Neighbourhood name</div><div class="done-val">The Annex</div></div>
+      </div>
+
+      <div class="active-panel">
+        <div class="step-label">Step 3 of 4</div>
+        <h2>Draw the boundary</h2>
+        <p>Click around the edges of what you consider your neighbourhood. Connect back to the start point to close the shape.</p>
+      </div>
+
+      <!-- LOGO STRIP — white background, real logos -->
+      <div class="logo-strip">
+        <div class="logo-item">
+          <img src="/files/logo-uoft.svg" alt="University of Toronto">
+        </div>
+        <div class="logo-divider"></div>
+        <div class="logo-item">
+          <img src="/files/school-of-cities.svg" alt="School of Cities">
+        </div>
+        <div class="logo-divider"></div>
+        <div class="logo-item">
+          <img src="/files/Carte-logomark.svg" alt="Carte">
+        </div>
+      </div>
+
+      <div class="footer-text">
+        <span>Inspired by the NYT's <a href="#">"Draw Your NYC Neighborhood"</a></span>
+        <a href="#">Data info</a>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><strong>White strip at base</strong>Logos sit above the light-tinted text footer — clean white bg, no dark background near logos</div>
+      <div class="note teal"><strong>Equal billing</strong>Each logo in a flex cell of equal width — natural proportions, max 30px tall</div>
+      <div class="note"><strong>Vertical dividers</strong>Thin 1px rules separate the three without creating hierarchy</div>
+      <div class="note teal"><strong>Condensed footer</strong>"Inspired by…" and "Data info" moved to a slim light-teal strip below</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
