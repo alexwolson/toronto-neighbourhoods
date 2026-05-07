@@ -3,7 +3,7 @@ import type React from "react";
 import type { Dispatch, SetStateAction, FormEvent } from "react";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Undo2, X, MapPin } from "lucide-react";
+import { Undo2, X, MapPin, Share2, Copy, Check } from "lucide-react";
 import type { LatLngTuple } from "leaflet";
 import { collection, addDoc, doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "../firebase";
@@ -93,6 +93,34 @@ export default function Sidebar({
     }
     return true;
   });
+
+  const [copied, setCopied] = useState(false);
+
+  const canNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
+  const canCopyToClipboard = typeof navigator !== 'undefined' && !!navigator.clipboard;
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (canNativeShare) {
+      try {
+        await navigator.share({
+          title: 'Draw Your Toronto Neighbourhood',
+          text: 'Help map Toronto — draw your neighbourhood boundary at',
+          url,
+        });
+      } catch {
+        // user cancelled or browser blocked — do nothing
+      }
+    } else if (canCopyToClipboard) {
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {
+        // clipboard write failed — do nothing
+      }
+    }
+  };
 
   const handleCloseWelcomeModal = () => {
     setIsWelcomeModalOpen(false);
@@ -369,6 +397,23 @@ export default function Sidebar({
           >
             Edit my submission
           </button>
+          {(canNativeShare || canCopyToClipboard) && (
+            <div className="border-t border-uoft-border pt-4 mt-4">
+              <p className="text-uoft-body text-sm mb-3">Know someone in Toronto? Help us map the whole city.</p>
+              <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 text-sm font-bold text-uoft-teal border-2 border-uoft-teal py-2.5 px-4 hover:bg-uoft-tint-light transition-colors w-full"
+              >
+                {copied ? (
+                  <><Check className="w-4 h-4" /> Copied!</>
+                ) : canNativeShare ? (
+                  <><Share2 className="w-4 h-4" /> Share with others</>
+                ) : (
+                  <><Copy className="w-4 h-4" /> Copy link</>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
