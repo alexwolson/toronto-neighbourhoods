@@ -4,7 +4,7 @@ import MapEditor from "./components/MapEditor";
 import Sidebar from "./components/Sidebar";
 
 export default function App() {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [homeLocation, setHomeLocation] = useState<LatLngTuple | null>(null);
   const [neighborhoodName, setNeighborhoodName] = useState("");
   const [polygonPoints, setPolygonPoints] = useState<LatLngTuple[]>([]);

@@ -54,8 +54,8 @@ function Modal({ title, children, onClose, footer }: {
 }
 
 interface SidebarProps {
-  step: 1 | 2 | 3 | 4;
-  setStep: Dispatch<SetStateAction<1 | 2 | 3 | 4>>;
+  step: 1 | 2 | 3;
+  setStep: Dispatch<SetStateAction<1 | 2 | 3>>;
   homeLocation: LatLngTuple | null;
   setHomeLocation: Dispatch<SetStateAction<LatLngTuple | null>>;
   neighborhoodName: string;
@@ -103,7 +103,7 @@ export default function Sidebar({
     const checkExistingSubmission = async () => {
       if (localStorage.getItem("hasSubmittedNeighborhood") === "true") {
         setIsAppSubmitted(true);
-        setStep(4);
+        setStep(3);
         
         const docId = localStorage.getItem("submittedNeighborhoodId");
         if (docId) {
@@ -192,10 +192,9 @@ export default function Sidebar({
     {/* Progress tabs */}
     <div className="flex bg-uoft-tint-bg border-b border-uoft-border shrink-0">
       {([
-        { n: 1, label: 'Pin' },
-        { n: 2, label: 'Name' },
-        { n: 3, label: 'Draw' },
-        { n: 4, label: 'Submit' },
+        { n: 1, label: 'Name' },
+        { n: 2, label: 'Draw' },
+        { n: 3, label: 'Submit' },
       ] as const).map(({ n, label }) => {
         const isDone   = step > n || isAppSubmitted;
         const isActive = step === n && !isAppSubmitted;
@@ -224,50 +223,23 @@ export default function Sidebar({
       {!isAppSubmitted && (
         <>
           {/* Step 1 — done (collapsed) */}
-          {step > 1 && homeLocation && (
+          {step > 1 && neighborhoodName && (
             <div className="bg-uoft-tint-step border-b border-uoft-border px-5 py-3 flex items-center gap-3 border-l-4 border-l-uoft-sky">
               <div className="w-5 h-5 bg-uoft-teal rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0">✓</div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-uoft-teal">Step 1 · Location pinned</div>
-                <div className="text-sm font-bold text-uoft-blue truncate">Pin dropped</div>
+                <div className="text-[11px] font-bold text-uoft-teal">Step 1 · Neighbourhood name</div>
+                <div className="text-sm font-bold text-uoft-blue truncate">{neighborhoodName}</div>
               </div>
-              <button
-                onClick={() => { setStep(1); setHomeLocation(null); setPolygonPoints([]); setIsFinished(false); }}
-                className="text-[11px] font-bold text-uoft-teal underline shrink-0"
-              >
-                Edit
-              </button>
+              <button onClick={() => setStep(1)} className="text-[11px] font-bold text-uoft-teal underline shrink-0">Edit</button>
             </div>
           )}
 
           {/* Step 1 — active */}
           {step === 1 && (
             <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6">
-              <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 1 of 4</div>
-              <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-2">Find your area</h2>
-              <p className="text-[14px] text-uoft-body leading-relaxed">Pan and zoom the map to find where you live. Click the map to drop a pin.</p>
-              <p className="text-[12px] text-uoft-muted mt-1.5 leading-relaxed">You don't need to pin your exact home — a nearby intersection or general area is fine.</p>
-            </div>
-          )}
-
-          {/* Step 2 — done (collapsed) */}
-          {step > 2 && neighborhoodName && (
-            <div className="bg-uoft-tint-step border-b border-uoft-border px-5 py-3 flex items-center gap-3 border-l-4 border-l-uoft-sky">
-              <div className="w-5 h-5 bg-uoft-teal rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0">✓</div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-uoft-teal">Step 2 · Neighbourhood name</div>
-                <div className="text-sm font-bold text-uoft-blue truncate">{neighborhoodName}</div>
-              </div>
-              <button onClick={() => setStep(2)} className="text-[11px] font-bold text-uoft-teal underline shrink-0">Edit</button>
-            </div>
-          )}
-
-          {/* Step 2 — active */}
-          {step === 2 && (
-            <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6">
-              <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 2 of 4</div>
+              <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 1 of 3</div>
               <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-3">What is this neighbourhood called?</h2>
-              <form onSubmit={(e) => { e.preventDefault(); if (neighborhoodName.trim()) setStep(3); }} className="flex flex-col gap-3">
+              <form onSubmit={(e) => { e.preventDefault(); if (neighborhoodName.trim()) setStep(2); }} className="flex flex-col gap-3">
                 <input
                   type="text"
                   required
@@ -291,16 +263,16 @@ export default function Sidebar({
             </div>
           )}
 
-          {/* Step 3 — done (collapsed) */}
-          {step > 3 && isFinished && (
+          {/* Step 2 — done (collapsed) */}
+          {step > 2 && isFinished && (
             <div className="bg-uoft-tint-step border-b border-uoft-border px-5 py-3 flex items-center gap-3 border-l-4 border-l-uoft-sky">
               <div className="w-5 h-5 bg-uoft-teal rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0">✓</div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-uoft-teal">Step 3 · Boundary drawn</div>
+                <div className="text-[11px] font-bold text-uoft-teal">Step 2 · Boundary drawn</div>
                 <div className="text-sm font-bold text-uoft-blue">{polygonPoints.length} points</div>
               </div>
               <button
-                onClick={() => { setStep(3); setPolygonPoints([]); setIsFinished(false); }}
+                onClick={() => { setStep(2); setPolygonPoints([]); setIsFinished(false); }}
                 className="text-[11px] font-bold text-uoft-teal underline shrink-0"
               >
                 Redraw
@@ -308,10 +280,10 @@ export default function Sidebar({
             </div>
           )}
 
-          {/* Step 3 — active */}
-          {step === 3 && (
+          {/* Step 2 — active */}
+          {step === 2 && (
             <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6">
-              <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 3 of 4</div>
+              <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 2 of 3</div>
               <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-2">Draw the boundary</h2>
               <p className="text-[14px] text-uoft-body leading-relaxed">Click around the edges of what you consider your neighbourhood. Connect back to the start point to close the shape.</p>
               {polygonPoints.length > 0 && (
@@ -325,19 +297,19 @@ export default function Sidebar({
             </div>
           )}
 
-          {/* Step 4 — upcoming placeholder */}
-          {step < 4 && (
+          {/* Step 3 — upcoming placeholder */}
+          {step < 3 && (
             <div className="border-l-4 border-l-[#e0e8f4] px-5 py-3 flex items-center gap-3 opacity-40 border-b border-uoft-border">
-              <div className="w-5 h-5 bg-[#e0e8f4] rounded-full flex items-center justify-center text-uoft-label text-[10px] font-black shrink-0">4</div>
+              <div className="w-5 h-5 bg-[#e0e8f4] rounded-full flex items-center justify-center text-uoft-label text-[10px] font-black shrink-0">3</div>
               <div className="text-[13px] font-bold text-uoft-label">Tell us more (optional)</div>
             </div>
           )}
 
-          {/* Step 4 — active (form) */}
-          {step === 4 && (
+          {/* Step 3 — active (form) */}
+          {step === 3 && (
             <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6 flex flex-col gap-5">
               <div>
-                <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 4 of 4</div>
+                <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 3 of 3</div>
                 <h2 className="text-[17px] font-black text-uoft-blue leading-snug">Tell us more</h2>
               </div>
               <form id="submit-form" className="flex flex-col gap-5" onSubmit={handleSubmit}>
@@ -402,7 +374,7 @@ export default function Sidebar({
 
     </div>
     {/* Submit bar — step 4 only */}
-    {step === 4 && !isAppSubmitted && (
+    {step === 3 && !isAppSubmitted && (
       <div className="bg-uoft-blue px-5 py-4 flex items-center justify-between gap-4 shrink-0">
         <p className="text-uoft-sky text-[11px] leading-snug max-w-[140px]">Your map will be added to our dataset</p>
         <button

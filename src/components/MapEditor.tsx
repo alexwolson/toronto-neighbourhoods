@@ -103,8 +103,8 @@ function createPointCollection(points: LatLngTuple[]) {
 }
 
 interface MapEditorProps {
-  step: 1 | 2 | 3 | 4;
-  setStep: Dispatch<SetStateAction<1 | 2 | 3 | 4>>;
+  step: 1 | 2 | 3;
+  setStep: Dispatch<SetStateAction<1 | 2 | 3>>;
   homeLocation: LatLngTuple | null;
   setHomeLocation: Dispatch<SetStateAction<LatLngTuple | null>>;
   polygonPoints: LatLngTuple[];
@@ -131,13 +131,20 @@ export default function MapEditor({
   const mapRef = useRef<maplibregl.Map | null>(null);
 
   const closePolygon = useCallback(() => {
+    if (polygonPoints.length > 0) {
+      const centroid: LatLngTuple = [
+        polygonPoints.reduce((s, p) => s + p[0], 0) / polygonPoints.length,
+        polygonPoints.reduce((s, p) => s + p[1], 0) / polygonPoints.length,
+      ];
+      setHomeLocation(centroid);
+    }
     setIsFinished(true);
     setMousePos(null);
-    setStep(4);
-  }, [setIsFinished, setStep]);
+    setStep(3);
+  }, [setIsFinished, setStep, polygonPoints, setHomeLocation]);
 
   const ghostLineParams = useMemo(() => {
-    if (isAppSubmitted || step !== 3 || isFinished || polygonPoints.length === 0 || !mousePos) return null;
+    if (isAppSubmitted || step !== 2 || isFinished || polygonPoints.length === 0 || !mousePos) return null;
     const lastPoint = polygonPoints[polygonPoints.length - 1];
     return [lastPoint, mousePos] as [LatLngTuple, LatLngTuple];
   }, [step, isFinished, polygonPoints, mousePos, isAppSubmitted]);
@@ -487,7 +494,7 @@ export default function MapEditor({
 
     const handleMouseMove = (e: maplibregl.MapMouseEvent) => {
       if (isAppSubmitted) return;
-      if (step !== 3 || isFinished || polygonPoints.length === 0) return;
+      if (step !== 2 || isFinished || polygonPoints.length === 0) return;
       if (isPointInToronto(e.lngLat.lat, e.lngLat.lng)) {
         setMousePos([e.lngLat.lat, e.lngLat.lng]);
       }
@@ -497,13 +504,7 @@ export default function MapEditor({
       if (isAppSubmitted) return;
       if (!isPointInToronto(e.lngLat.lat, e.lngLat.lng)) return;
 
-      if (step === 1) {
-        setHomeLocation([e.lngLat.lat, e.lngLat.lng]);
-        setStep(2);
-        return;
-      }
-
-      if (step !== 3 || isFinished) return;
+      if (step !== 2 || isFinished) return;
 
       if (polygonPoints.length > 2) {
         const firstPoint = polygonPoints[0];
@@ -557,7 +558,7 @@ export default function MapEditor({
     );
 
     drawPointsSource?.setData(
-      step === 3 && polygonPoints.length > 0 ? createPointCollection(polygonPoints) : emptyGeoJSON
+      step === 2 && polygonPoints.length > 0 ? createPointCollection(polygonPoints) : emptyGeoJSON
     );
 
     homePointSource?.setData(
@@ -565,7 +566,7 @@ export default function MapEditor({
     );
   }, [isMapReady, polygonPoints, ghostLineParams, isFinished, step, homeLocation]);
 
-  const cursorClass = !isAppSubmitted && (step === 1 || (step === 3 && !isFinished))
+  const cursorClass = !isAppSubmitted && step === 2 && !isFinished
     ? "cursor-crosshair"
     : "cursor-default";
 
