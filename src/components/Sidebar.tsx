@@ -116,6 +116,7 @@ export default function Sidebar({
       try {
         await navigator.clipboard.writeText(url);
         setCopied(true);
+        if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
         copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
       } catch {
         // clipboard write failed — do nothing
@@ -426,7 +427,7 @@ export default function Sidebar({
       )}
 
     </div>
-    {/* Submit bar — step 4 only */}
+    {/* Submit bar — step 3 only */}
     {step === 3 && !isAppSubmitted && (
       <div className="bg-uoft-blue px-5 py-4 flex items-center justify-between gap-4 shrink-0">
         <p className="text-uoft-sky text-[11px] leading-snug max-w-[140px]">Your map will be added to our dataset</p>
