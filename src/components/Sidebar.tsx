@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
 import type React from "react";
 import type { Dispatch, SetStateAction, FormEvent } from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Undo2, X, MapPin, Share2, Copy, Check } from "lucide-react";
 import type { LatLngTuple } from "leaflet";
@@ -95,6 +95,7 @@ export default function Sidebar({
   });
 
   const [copied, setCopied] = useState(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const canNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
   const canCopyToClipboard = typeof navigator !== 'undefined' && !!navigator.clipboard;
@@ -105,7 +106,7 @@ export default function Sidebar({
       try {
         await navigator.share({
           title: 'Draw Your Toronto Neighbourhood',
-          text: 'Help map Toronto — draw your neighbourhood boundary at',
+          text: 'Help map Toronto by drawing your neighbourhood boundary',
           url,
         });
       } catch {
@@ -115,7 +116,7 @@ export default function Sidebar({
       try {
         await navigator.clipboard.writeText(url);
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
       } catch {
         // clipboard write failed — do nothing
       }
@@ -128,11 +129,17 @@ export default function Sidebar({
   };
   
   useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
     const checkExistingSubmission = async () => {
       if (localStorage.getItem("hasSubmittedNeighborhood") === "true") {
         setIsAppSubmitted(true);
         setStep(3);
-        
+
         const docId = localStorage.getItem("submittedNeighborhoodId");
         if (docId) {
           try {
@@ -402,6 +409,7 @@ export default function Sidebar({
               <p className="text-uoft-body text-sm mb-3">Know someone in Toronto? Help us map the whole city.</p>
               <button
                 onClick={handleShare}
+                aria-label="Share this site with others"
                 className="flex items-center justify-center gap-2 text-sm font-bold text-uoft-teal border-2 border-uoft-teal py-2.5 px-4 hover:bg-uoft-tint-light transition-colors w-full"
               >
                 {copied ? (
