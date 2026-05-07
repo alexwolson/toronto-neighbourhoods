@@ -272,7 +272,7 @@ export default function Sidebar({
                 <div className="text-sm font-bold text-uoft-blue">{polygonPoints.length} points</div>
               </div>
               <button
-                onClick={() => { setStep(2); setPolygonPoints([]); setIsFinished(false); }}
+                onClick={() => { setStep(2); setPolygonPoints([]); setIsFinished(false); setHomeLocation(null); }}
                 className="text-[11px] font-bold text-uoft-teal underline shrink-0"
               >
                 Redraw
@@ -437,7 +437,7 @@ export default function Sidebar({
             <p>When you submit your map, we store the following data in our database securely:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li><strong className="text-uoft-blue">Your neighbourhood's name</strong> (including alternate names you might suggest).</li>
-              <li><strong className="text-uoft-blue">The pinned location</strong> (a single latitude/longitude coordinate representing the area you selected, not necessarily your home).</li>
+              <li><strong className="text-uoft-blue">The centre of your drawn boundary</strong> (a single latitude/longitude coordinate calculated from the shape you drew).</li>
               <li><strong className="text-uoft-blue">The boundary polygon</strong> (the shape of the neighbourhood you drew).</li>
               <li><strong className="text-uoft-blue">Optional feedback</strong> on how the neighbourhood is changing.</li>
               <li><strong className="text-uoft-blue">A timestamp</strong> of when the submission was made.</li>
