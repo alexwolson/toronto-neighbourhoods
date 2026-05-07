@@ -419,15 +419,21 @@ export default function Sidebar({
     {/* Logo strip */}
     <div className="bg-white border-t border-uoft-border px-4 py-3 flex items-center justify-between gap-2 shrink-0" style={{ minHeight: '56px' }}>
       <div className="flex-1 flex items-center justify-center">
-        <img src={logoUofT} alt="University of Toronto" style={{ maxHeight: '28px', width: 'auto', maxWidth: '100%' }} />
+        <a href="https://utoronto.ca" target="_blank" rel="noopener noreferrer">
+          <img src={logoUofT} alt="University of Toronto" style={{ maxHeight: '28px', width: 'auto', maxWidth: '100%' }} />
+        </a>
       </div>
       <div className="w-px h-8 bg-uoft-border shrink-0" />
       <div className="flex-1 flex items-center justify-center">
-        <img src={logoSchoolCities} alt="School of Cities" style={{ maxHeight: '28px', width: 'auto', maxWidth: '100%' }} />
+        <a href="https://schoolofcities.utoronto.ca" target="_blank" rel="noopener noreferrer">
+          <img src={logoSchoolCities} alt="School of Cities" style={{ maxHeight: '28px', width: 'auto', maxWidth: '100%' }} />
+        </a>
       </div>
       <div className="w-px h-8 bg-uoft-border shrink-0" />
       <div className="flex-1 flex items-center justify-center">
-        <img src={logoCarte} alt="Carte" style={{ maxHeight: '44px', width: 'auto', maxWidth: '100%' }} />
+        <a href="https://carte.utoronto.ca" target="_blank" rel="noopener noreferrer">
+          <img src={logoCarte} alt="Carte" style={{ maxHeight: '44px', width: 'auto', maxWidth: '100%' }} />
+        </a>
       </div>
     </div>
 
