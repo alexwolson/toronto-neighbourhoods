@@ -410,7 +410,7 @@ export default function Sidebar({
           </button>
           {(canNativeShare || canCopyToClipboard) && (
             <div className="border-t border-uoft-border pt-4 mt-4">
-              <p className="text-uoft-body text-sm mb-3">Know someone in Toronto? Help us map the whole city.</p>
+              <p className="text-uoft-body text-sm mb-3">Help us map the whole city — share with your neighbours.</p>
               <button
                 onClick={handleShare}
                 aria-label="Share this site with others"
