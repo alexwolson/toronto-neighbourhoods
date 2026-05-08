@@ -333,14 +333,6 @@ export default function Sidebar({
             </div>
           )}
 
-          {/* Step 3 — upcoming placeholder */}
-          {step < 3 && (
-            <div className="border-l-4 border-l-[#e0e8f4] px-5 py-3 flex items-center gap-3 opacity-40 border-b border-uoft-border">
-              <div className="w-5 h-5 bg-[#e0e8f4] rounded-full flex items-center justify-center text-uoft-label text-[10px] font-black shrink-0">3</div>
-              <div className="text-[13px] font-bold text-uoft-label">Tell us more (optional)</div>
-            </div>
-          )}
-
           {/* Step 3 — active (form) */}
           {step === 3 && (
             <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6 flex flex-col gap-5">
