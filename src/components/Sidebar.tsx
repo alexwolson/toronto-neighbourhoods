@@ -176,6 +176,17 @@ export default function Sidebar({
     setIsSubmitting(true);
     setSubmitError(null);
     try {
+      if (import.meta.env.DEV) {
+        console.log('[DEV] Skipping Firestore write. Payload:', {
+          neighborhoodName: neighborhoodName.trim(),
+          homeLocation,
+          polygonPoints: polygonPoints.map(p => ({ lat: p[0], lng: p[1] })),
+          changesText: changesText.trim(),
+          otherNamesText: otherNamesText.trim(),
+        });
+        setIsAppSubmitted(true);
+        return;
+      }
       const pathForWrite = 'neighborhoods';
       let docRefId = localStorage.getItem("submittedNeighborhoodId");
       
