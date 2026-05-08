@@ -320,8 +320,8 @@ export default function Sidebar({
           {step === 2 && (
             <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6">
               <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 2 of 3</div>
-              <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-2">Draw the boundary</h2>
-              <p className="text-[14px] text-uoft-body leading-relaxed">Click around the edges of what you consider your neighbourhood. Connect back to the start point to close the shape.</p>
+              <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-2">Trace your neighbourhood</h2>
+              <p className="text-[14px] text-uoft-body leading-relaxed">Click to place points around the boundary. Connect back to the start to close the shape.</p>
               {polygonPoints.length > 0 && (
                 <button
                   onClick={handleUndo}
