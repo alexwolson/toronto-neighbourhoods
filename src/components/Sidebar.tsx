@@ -274,7 +274,7 @@ export default function Sidebar({
           {step === 1 && (
             <div className="border-l-4 border-l-uoft-blue px-5 py-5 md:px-6">
               <div className="text-[12px] font-bold text-uoft-teal mb-1.5">Step 1 of 3</div>
-              <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-3">What is this neighbourhood called?</h2>
+              <h2 className="text-[17px] font-black text-uoft-blue leading-snug mb-3">What do you call the neighbourhood where you live?</h2>
               <form onSubmit={(e) => { e.preventDefault(); if (neighborhoodName.trim()) setStep(2); }} className="flex flex-col gap-3">
                 <input
                   type="text"
